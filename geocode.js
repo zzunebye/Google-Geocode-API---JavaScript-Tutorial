@@ -7,6 +7,8 @@ const locationForm = document.getElementById('location-form');
 // Listen for Submit
 locationForm.addEventListener('submit', geocode);
 
+let map = '';
+
 function geocode(e) {
   // Prevent actual submit
   e.preventDefault();
@@ -63,6 +65,7 @@ function geocode(e) {
 
       // Init Map
       document.getElementById('map').style.visibility = "visible";
+      console.log(lat, lng);
       initMap(location, lat, lng)
     })
     .catch(function (error) {
@@ -70,18 +73,56 @@ function geocode(e) {
     })
 }
 
-function initMap(location, lat, lng) {
+function initMap(location, lat_data, lng_data) {
+  console.log(lat_data, lng_data);
+
   // Map options
   var options = {
     zoom: 8,
     center: {
-      lat: lat,
-      lng: lng
+      lat: lat_data,
+      lng: lng_data
     }
   }
 
   // New map
-  var map = new google.maps.Map(document.getElementById('map'), options);
+  map = new google.maps.Map(document.getElementById('map'), options);
+
+  const marker = {
+    coords: {
+      lat: lat_data,
+      lng: lng_data
+    },
+    content: '<h1>Lynn MA</h1>'
+  }
+  console.log(marker);
+
+  addMarker(marker);
+}
+
+function addMarker(props) {
+  var marker = new google.maps.Marker({
+    position: props.coords,
+    map: map,
+    // icon: props.iconImage // undefined value...
+  });
+
+  // Check for customicon
+  if (props.iconImage) {
+    // Set icon image
+    marker.setIcon(props.iconImage)
+  }
+
+  // Check content
+  if (props.content) {
+    var infoWindow = new google.maps.InfoWindow({
+      content: props.content
+    });
+
+    marker.addListener('click', function () {
+      infoWindow.open(map, marker);
+    });
+  }
 }
 
 function openMap(location, lat, lng) {
