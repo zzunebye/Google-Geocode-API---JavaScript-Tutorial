@@ -7,7 +7,14 @@
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
-  <link rel="stylesheet" href=" ">
+  <link rel="stylesheet" href="">
+  <style>
+    #map {
+      height: 400px;
+      width: 100%;
+      visibility: hidden;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -21,76 +28,14 @@
     <div class="card-block mb-3" id="formatted-address"></div>
     <div class="card-block mb-3" id="address-components"></div>
     <div class="card-block mb-3" id="geometry"></div>
+    <div id="map"></div>
+
   </div>
 
-  <script>
-    // call geocode()
-    //geocode();
+  <script defer async src="geocode.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOYJr7At-8assOQ-QddL2w5emwRH5LDFI&callback=initMap&libraries=&v=weekly">
+  // <script defer async src="map.js"></script>
 
-    // Get Location form
-    const locationForm = document.getElementById('location-form');
-
-    // Listen for Submit
-    locationForm.addEventListener('submit', geocode);
-
-    function geocode(e) {
-      // Prevent actual submit
-      e.preventDefault();
-
-      var location = document.getElementById('location-input').value;
-      axios.get('https://maps.googleapis.com/maps/api/geocode/json',{
-        params: {
-          address: location,
-          key: 'AIzaSyDOYJr7At-8assOQ-QddL2w5emwRH5LDFI'
-        }
-      })
-      .then(function(response) {
-        // Log full response
-        console.log(response);
-
-        //Formatted Address
-        let formattedAddress = response.data.results[0].formatted_address;
-
-        // Output to app  
-        let formattedAddressOutput = `
-          <ul class="list-group">
-            <li class="list-group-item">${formattedAddress}</li>
-          </ul>
-        `;
-
-        // Address Components
-        let addressComponents = response.data.results[0].address_components;
-
-        // Output to app
-        let addressComponentsOutput = '<ul class="list-group">';
-        for(let i = 0; i < addressComponents.length;i++){
-          addressComponentsOutput += `
-            <li class="list-group-item"><strong>${addressComponents[i].types[0]}</strong>:
-              ${addressComponents[i].long_name}
-            </li>
-          `;
-        }
-        addressComponentsOutput += '</ul>';
-
-        // Geometry
-          let lat = response.data.results[0].geometry.location.lat;
-          let lng = response.data.results[0].geometry.location.lng;
-          let geometryOutput = `
-            <ul class="list-group">
-              <li class="list-group-item"><strong>Latitude</strong>:${lat}</li>
-              <li class="list-group-item"><strong>Longtitude</strong>:${lng}</li>
-            </ul>
-        `;
-
-        // innerHTML Output
-        document.getElementById('formatted-address').innerHTML = formattedAddressOutput;
-        document.getElementById('address-components').innerHTML = addressComponentsOutput;
-        document.getElementById('geometry').innerHTML = geometryOutput;
-      })
-      .catch(function(error) {
-        console.log(error);
-      })
-    }
   </script>
 </body>
 </html>
